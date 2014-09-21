@@ -14,8 +14,8 @@ public class SuriTest {
 		String s2 = suri.shorten("http://blog.scheakur.com");
 		String s3 = suri.shorten("http://scheakur.com");
 
-		assertThat(suri.lengthen(s1), is("http://scheakur.com"));
-		assertThat(suri.lengthen(s2), is("http://blog.scheakur.com"));
+		assertThat(suri.lengthen(s1).get(), is("http://scheakur.com"));
+		assertThat(suri.lengthen(s2).get(), is("http://blog.scheakur.com"));
 		assertThat(s3, is(s1));
 	}
 

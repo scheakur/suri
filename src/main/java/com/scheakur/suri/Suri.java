@@ -1,5 +1,6 @@
 package com.scheakur.suri;
 
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,24 +35,20 @@ public class Suri {
 
 		public DataStore() {
 			this.id = new AtomicLong(0);
-			this.uri2id = new ConcurrentHashMap<String, Long>();
-			this.short2uri = new ConcurrentHashMap<String, String>();
+			this.uri2id = new ConcurrentHashMap<>();
+			this.short2uri = new ConcurrentHashMap<>();
 		}
 
 		public long newId() {
 			return this.id.addAndGet(1);
 		}
 
-		public boolean hasUri(String uri) {
-			return uri2id.containsKey(uri);
+		public Optional<Long> getId(String uri) {
+			return Optional.ofNullable(uri2id.get(uri));
 		}
 
-		public long getId(String uri) {
-			return uri2id.get(uri);
-		}
-
-		public String getUri(String shortUri) {
-			return short2uri.get(shortUri);
+		public Optional<String> getUri(String shortUri) {
+			return Optional.ofNullable(short2uri.get(shortUri));
 		}
 
 		public void store(long id, String uri, String shortUri) {
@@ -62,18 +59,18 @@ public class Suri {
 	}
 
 	public String shorten(String uri) {
-		if (ds.hasUri(uri)) {
-			long id = ds.getId(uri);
-			return encoder.encode(id);
+		Optional<Long> id = ds.getId(uri);
+		if (id.isPresent()) {
+			return encoder.encode(id.get());
 		}
 
-		long id = ds.newId();
-		String s = encoder.encode(id);
-		ds.store(id, uri, s);
+		long newId = ds.newId();
+		String s = encoder.encode(newId);
+		ds.store(newId, uri, s);
 		return s;
 	}
 
-	public String lengthen(String shortUri) {
+	public Optional<String> lengthen(String shortUri) {
 		return ds.getUri(shortUri);
 	}
 
