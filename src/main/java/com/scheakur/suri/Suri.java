@@ -8,10 +8,12 @@ public class Suri {
 
 	private final Encoder encoder;
 	private final DataStore ds;
+	private final IdGenerator idGenerator;
 
 	public Suri() {
 		this.encoder = new Encoder();
 		this.ds = new DataStore();
+		this.idGenerator = new IdGenerator(0);
 	}
 
 	class Encoder {
@@ -27,20 +29,28 @@ public class Suri {
 
 	}
 
-	class DataStore {
+	class IdGenerator {
 
 		private AtomicLong idSequence;
-		private ConcurrentHashMap<String, Long> uri2id;
-		private ConcurrentHashMap<String, String> short2uri;
 
-		public DataStore() {
-			this.idSequence = new AtomicLong(0);
-			this.uri2id = new ConcurrentHashMap<>();
-			this.short2uri = new ConcurrentHashMap<>();
+		public IdGenerator(long start) {
+			this.idSequence = new AtomicLong(start);
 		}
 
 		public long newId() {
 			return idSequence.addAndGet(1);
+		}
+
+	}
+
+	class DataStore {
+
+		private ConcurrentHashMap<String, Long> uri2id;
+		private ConcurrentHashMap<String, String> short2uri;
+
+		public DataStore() {
+			this.uri2id = new ConcurrentHashMap<>();
+			this.short2uri = new ConcurrentHashMap<>();
 		}
 
 		public Optional<Long> getId(String uri) {
@@ -64,7 +74,7 @@ public class Suri {
 			return encoder.encode(id.get());
 		}
 
-		long newId = ds.newId();
+		long newId = idGenerator.newId();
 		String s = encoder.encode(newId);
 		ds.store(newId, uri, s);
 		return s;
