@@ -29,18 +29,18 @@ public class Suri {
 
 	class DataStore {
 
-		private AtomicLong id;
+		private AtomicLong idSequence;
 		private ConcurrentHashMap<String, Long> uri2id;
 		private ConcurrentHashMap<String, String> short2uri;
 
 		public DataStore() {
-			this.id = new AtomicLong(0);
+			this.idSequence = new AtomicLong(0);
 			this.uri2id = new ConcurrentHashMap<>();
 			this.short2uri = new ConcurrentHashMap<>();
 		}
 
 		public long newId() {
-			return this.id.addAndGet(1);
+			return idSequence.addAndGet(1);
 		}
 
 		public Optional<Long> getId(String uri) {
