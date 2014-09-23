@@ -9,14 +9,18 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Suri {
 
-	private final IdEncoder encoder;
 	private final DataStore ds;
+	private final IdEncoder encoder;
 	private final IdGenerator idGenerator;
 
 	public Suri() {
-		this.encoder = new Base62Encoder();
-		this.ds = new InMemoryDataStore();
-		this.idGenerator = new SequentialIdGenerator(0);
+		this(new InMemoryDataStore(), new Base62Encoder(), new SequentialIdGenerator(0));
+	}
+
+	public Suri(DataStore ds, IdEncoder encoder, IdGenerator idGenerator) {
+		this.ds = ds;
+		this.encoder = encoder;
+		this.idGenerator = idGenerator;
 	}
 
 	public String shorten(String uri) {

@@ -4,7 +4,7 @@ import com.scheakur.suri.IdEncoder;
 
 public class Base62Encoder implements IdEncoder {
 
-	String[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHUJKLMNOPQRSTUVWXYZ".split("");
+	private static final String[] chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHUJKLMNOPQRSTUVWXYZ".split("");
 
 	@Override
 	public String encode(long id) {
