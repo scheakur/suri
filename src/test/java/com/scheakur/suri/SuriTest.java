@@ -3,6 +3,7 @@ package com.scheakur.suri;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 public class SuriTest {
@@ -17,6 +18,8 @@ public class SuriTest {
 		assertThat(suri.lengthen(s1).get(), is("http://scheakur.com"));
 		assertThat(suri.lengthen(s2).get(), is("http://blog.scheakur.com"));
 		assertThat(s3, is(s1));
+		assertFalse(suri.lengthen("not exists").isPresent());
+
 	}
 
 }
