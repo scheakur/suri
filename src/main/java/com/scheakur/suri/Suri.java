@@ -5,19 +5,20 @@ import com.scheakur.suri.impl.InMemoryDataStore;
 import com.scheakur.suri.impl.SequentialIdGenerator;
 
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Suri {
 
+	private final String origin;
 	private final DataStore ds;
 	private final IdEncoder encoder;
 	private final IdGenerator idGenerator;
 
-	public Suri() {
-		this(new InMemoryDataStore(), new Base62Encoder(), new SequentialIdGenerator(0));
+	public Suri(String origin) {
+		this(origin, new InMemoryDataStore(), new Base62Encoder(), new SequentialIdGenerator(0));
 	}
 
-	public Suri(DataStore ds, IdEncoder encoder, IdGenerator idGenerator) {
+	public Suri(String origin, DataStore ds, IdEncoder encoder, IdGenerator idGenerator) {
+		this.origin = origin.endsWith("/") ? origin : origin + "/";
 		this.ds = ds;
 		this.encoder = encoder;
 		this.idGenerator = idGenerator;
@@ -26,17 +27,18 @@ public class Suri {
 	public String shorten(String uri) {
 		Optional<Long> id = ds.getId(uri);
 		if (id.isPresent()) {
-			return encoder.encode(id.get());
+			return origin + encoder.encode(id.get());
 		}
 
 		long newId = idGenerator.newId();
 		String s = encoder.encode(newId);
 		ds.store(newId, uri, s);
-		return s;
+		return origin + s;
 	}
 
 	public Optional<String> lengthen(String shortUri) {
-		return ds.getUri(shortUri);
+		String s = shortUri.replaceFirst(origin, "");
+		return ds.getUri(s);
 	}
 
 }
