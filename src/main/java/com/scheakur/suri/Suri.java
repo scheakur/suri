@@ -27,12 +27,16 @@ public class Suri {
 	public String shorten(String uri) {
 		Optional<Long> id = ds.getId(uri);
 		if (id.isPresent()) {
-			return origin + encoder.encode(id.get());
+			return asUrl(encoder.encode(id.get()));
 		}
 
 		long newId = idGenerator.newId();
 		String s = encoder.encode(newId);
 		ds.store(newId, uri, s);
+		return asUrl(s);
+	}
+
+	private String asUrl(String s) {
 		return origin + s;
 	}
 
